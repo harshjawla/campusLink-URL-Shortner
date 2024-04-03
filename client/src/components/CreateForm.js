@@ -31,6 +31,7 @@ export default function CreateForm({username}) {
     }
 
     try {
+      setShowLink("");
       setLoader(true);
       const data = {
         title: title,
