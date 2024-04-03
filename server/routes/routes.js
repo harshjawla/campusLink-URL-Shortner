@@ -59,6 +59,9 @@ router.post("/register", async (req, res) => {
         // Set the JWT token as an HTTP-only cookie
         res.cookie("jwt", token, {
           httpOnly: true,
+          sameSite: "None",
+          secure: true,
+          domain: Backend_URL,
         });
         res.status(200).json({ message: "Registration successful" });
       } else {
@@ -95,6 +98,9 @@ router.post("/login", async (req, res) => {
         // Set the JWT token as an HTTP-only cookie
         res.cookie("jwt", token, {
           httpOnly: true,
+          sameSite: "None",
+          secure: true,
+          domain: Backend_URL,
         });
         res.status(200).json({ message: "Login successful" });
       } else {
@@ -112,6 +118,9 @@ router.post("/logout", async (req, res) => {
   try {
     res.cookie("jwt", " ", {
       httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      domain: Backend_URL,
     });
     return res.status(200).send("Logged Out Successfully");
   } catch (error) {

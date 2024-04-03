@@ -28,8 +28,15 @@ const URL = process.env.MONGODB_URL;
 
 mongoose.connect(URL);
 
+app.get("/", (req,res)=>{
+  res.send("You are on Backend!");
+});
+
 app.use("/", routes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT: ${PORT}`);
 });
+
+
+module.exports = app;

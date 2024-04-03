@@ -1,5 +1,5 @@
-const Backend_URL = 'http://localhost:4000';
-const Frontend_URL = 'http://localhost:3000';
+const Backend_URL = 'https://campus-link-url-shortner.vercel.app';
+const Frontend_URL = 'https://campuslink-client.vercel.app';
 
 export {
     Backend_URL,
