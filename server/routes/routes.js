@@ -6,7 +6,7 @@ const { User, Files } = require("../schemas/schema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const shortId = require("shortid");
-const { Backend_URL, Frontend_URL } = require("../config");
+const { Backend_URL, Frontend_URL, Backend_DOMAIN } = require("../config");
 
 const saltRounds = 10;
 
@@ -61,7 +61,7 @@ router.post("/register", async (req, res) => {
           httpOnly: true,
           sameSite: "None",
           secure: true,
-          domain: Backend_URL,
+          domain: Backend_DOMAIN,
         });
         res.status(200).json({ message: "Registration successful" });
       } else {
@@ -100,7 +100,7 @@ router.post("/login", async (req, res) => {
           httpOnly: true,
           sameSite: "None",
           secure: true,
-          domain: Backend_URL,
+          domain: Backend_DOMAIN,
         });
         res.status(200).json({ message: "Login successful" });
       } else {
@@ -120,7 +120,7 @@ router.post("/logout", async (req, res) => {
       httpOnly: true,
       sameSite: "None",
       secure: true,
-      domain: Backend_URL,
+      domain: Backend_DOMAIN,
     });
     return res.status(200).send("Logged Out Successfully");
   } catch (error) {
