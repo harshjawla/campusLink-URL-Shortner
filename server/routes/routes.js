@@ -287,7 +287,7 @@ router.post("/editfile", async (req, res) => {
 router.post("/forgetpassword", async (req, res) => {
   const { username } = req.body;
 
-  const user = User.findOne({username: username});
+  const user = await User.findOne({username: username});
 
   if(!user){
     return res.status(404).json({message: "User not found"});
@@ -341,7 +341,7 @@ router.post("/forgetpassword", async (req, res) => {
 });
 
 router.post("/update/user", async (req, res) => {
-  const { username, userID, password } = req.body;
+  const { userID, password } = req.body;
   const user = await Password.findOne({ username: username, userID: userID });
   if (user) {
     bcrypt.hash(password, saltRounds, async function (err, hash) {
@@ -349,10 +349,11 @@ router.post("/update/user", async (req, res) => {
         console.log(err);
         return res.status(500).send("Internal Server Error");
       }
-
+      const username = user.username;
       const userExists = await User.findOne({ username: username });
 
       if (userExists) {
+        const response = await Password.deleteMany({username: username});
         userExists.password = hash;
 
         await userExists.save();
@@ -364,6 +365,20 @@ router.post("/update/user", async (req, res) => {
     });
   } else {
     return res.status(400).json({ message: "Link expired!" });
+  }
+});
+
+router.post("/linkexpiry",async (req,res)=>{
+  try {
+    const {userID} = req.body;
+    const user = Password.findOne({userID : userID});
+    if(user){
+      res.status(200).json({message: "Link is Valid"});
+    } else{
+      res.status(404).json({message: "Link Expired"});
+    }
+  } catch (error) {
+    res.status(500).json({message: "Internal Server Error"});
   }
 });
 
