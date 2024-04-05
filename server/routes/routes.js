@@ -371,7 +371,7 @@ router.post("/update/user", async (req, res) => {
 router.post("/linkexpiry",async (req,res)=>{
   try {
     const {userID} = req.body;
-    const user = Password.findOne({userID : userID});
+    const user = await Password.findOne({userID : userID});
     if(user){
       res.status(200).json({message: "Link is Valid"});
     } else{
