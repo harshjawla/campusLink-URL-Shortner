@@ -1,64 +1,103 @@
 import { useEffect, useState } from "react";
-import companyLogo from "../logos/companylogo.svg";
-import { Link } from "react-router-dom";
 import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
 import { Backend_URL, Frontend_URL } from "./config";
+import { useParams } from "react-router-dom";
 
-export default function RegisterPage() {
-  const [loader, setLoader] = useState(false);
-  const [email, setEmail] = useState("");
+export default function SetNewPassword() {
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loader, setLoader] = useState(true);
+  const [linkValid, setLinkValid] = useState(0);
   const [warning, setWarning] = useState("");
   const [status, setStatus] = useState("");
-  const [registered, setRegistered] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const { userID } = useParams();
+
+  function takeMeToLoginPage() {
+    setTimeout(() => {
+      window.location.href = Frontend_URL + "/login";
+    }, 1000);
+  }
 
   async function handleClick() {
-    if (!email || !password || !confirmPassword) {
+    if (!password || !confirmPassword) {
       setStatus("error");
-      return setWarning("All the fields are required");
+      setWarning("All the fields are required");
+      return;
     }
+
     if (password !== confirmPassword) {
       setStatus("error");
-      return setWarning("Passwords don't match!");
+      setWarning("Passwords don't match");
+      return;
     }
 
-    setLoader(true);
-
     try {
+      setLoader(true);
       const data = {
-        username: email,
+        userID: userID,
         password: password,
       };
-      setPassword("");
-      setConfirmPassword("");
-      const response = await fetch(Backend_URL + "/register", {
+      const response = await fetch(Backend_URL + "/update/user", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        setRegistered(true);
+        setLoader(false);
+        setStatus("success");
+        setWarning("PassWord Changed, you Will be taken to login page shortly");
+        takeMeToLoginPage();
       } else if (response.status === 400) {
         setLoader(false);
-        setWarning("User already exist, please login");
-        setStatus("info");
+        setStatus("error");
+        setWarning("Link expired, please generate a new one");
+        takeMeToLoginPage();
       } else {
         setLoader(false);
-        setWarning("Internal Server Error");
         setStatus("error");
+        setWarning("Internal Server Error");
       }
     } catch (error) {
       setLoader(false);
-      setWarning("Internal Server Error");
       setStatus("error");
+      setWarning("Internal Server Error");
     }
   }
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const response = await fetch(Backend_URL + "/linkexpiry", {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/json",
+            },
+            body: JSON.stringify(userID)
+        });
+        if(response.ok){
+            setLinkValid(1);
+        } else {
+            setLinkValid(2);
+        }
+      } catch (error) {
+        setLinkValid(2);
+      }
+    }
+
+    fetchUser();
+  }, []);
+
+  useEffect(()=>{
+    if(linkValid===1){
+        setLoader(false);
+    } else if(linkValid===2){
+        window.location.href = Frontend_URL + "/error";
+    }
+  }, [linkValid])
 
   useEffect(() => {
     if (warning && status) {
@@ -108,19 +147,16 @@ export default function RegisterPage() {
     }
   }, [warning, status]);
 
-  useEffect(() => {
-    if (registered) {
-      window.location.href = Frontend_URL + "/dashboard";
-    }
-  }, [registered]);
-
   return (
     <>
       {loader && <Loading />}
       <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
         <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
           <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-            <div className="flex items-center justify-center cursor-pointer" onClick={()=> window.location.href = Frontend_URL + "/"}>
+            <div
+              className="flex items-center justify-center cursor-pointer"
+              onClick={() => (window.location.href = Frontend_URL + "/")}
+            >
               <img
                 src={companyLogo}
                 className="w-10 h-10 mr-2"
@@ -129,16 +165,11 @@ export default function RegisterPage() {
               <span className="text-xl font-bold">CampusLink</span>
             </div>
             <div className="mt-12 flex flex-col items-center">
-              <h1 className="text-2xl xl:text-3xl font-extrabold">Sign up</h1>
+              <h1 className="text-2xl xl:text-3xl font-extrabold">
+                Forget Password
+              </h1>
               <div className="w-full flex-1 mt-8">
                 <div className="mx-auto max-w-xs">
-                  <input
-                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-whitw"
-                    type="email"
-                    placeholder="Email *"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                  />
                   <input
                     className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                     type="password"
@@ -169,7 +200,7 @@ export default function RegisterPage() {
                       <circle cx="8.5" cy="7" r="4" />
                       <path d="M20 8v6M23 11h-6" />
                     </svg>
-                    <span className="ml-3">Sign Up</span>
+                    <span className="ml-3">change PassWord</span>
                   </button>
                   <p className="mt-6 text-xs text-gray-600 text-center">
                     Already have an account{" "}

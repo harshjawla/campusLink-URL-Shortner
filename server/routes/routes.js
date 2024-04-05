@@ -286,6 +286,13 @@ router.post("/editfile", async (req, res) => {
 
 router.post("/forgetpassword", async (req, res) => {
   const { username } = req.body;
+
+  const user = User.findOne({username: username});
+
+  if(!user){
+    return res.status(404).json({message: "User not found"});
+  }
+
   const userID = shortId.generate();
   const entry = await Password.create({
     username: username,
@@ -293,9 +300,12 @@ router.post("/forgetpassword", async (req, res) => {
   });
   if (entry) {
     var transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "Gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: "natflix88@gmail.com",
+        user: process.env.GMAIL,
         pass: process.env.GPASSWORD,
       },
     });
@@ -303,7 +313,7 @@ router.post("/forgetpassword", async (req, res) => {
     const resetPasswordLink = Frontend_URL + "/reset/" + userID;
 
     var mailOptions = {
-      from: "CampusLink",
+      from: `"CampusLink" <${process.env.GMAIL}>`,
       to: username,
       subject: "Reset Your Password",
       html: `
@@ -330,7 +340,7 @@ router.post("/forgetpassword", async (req, res) => {
   }
 });
 
-router.post("/forget/user", async (req, res) => {
+router.post("/update/user", async (req, res) => {
   const { username, userID, password } = req.body;
   const user = await Password.findOne({ username: username, userID: userID });
   if (user) {

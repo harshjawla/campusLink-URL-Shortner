@@ -10,6 +10,8 @@ import CreateForm from "./components/CreateForm";
 import Error404Page from "./components/Error404Page";
 import NoLinksMessage from "./components/NoLinksMessage";
 import EditForm from "./components/EditForm";
+import ForgetPassword from "./components/ForgetPassword";
+import SetNewPassword from "./components/SetNewPassword";
 
 function App() {
   const [user, setUser] = useState();
@@ -72,6 +74,8 @@ function App() {
         }
       />
       <Route path="/error" element={<Error404Page />} />
+      <Route path="/forgotpassword" element={<ForgetPassword />} />
+      <Route path="/reset/:userID" element={<SetNewPassword />} />
       <Route path="/edit/:linkID" element={user ? < EditForm username={user.username} /> : <Navigate to={"/login"} />} />
     </Routes>
   );
