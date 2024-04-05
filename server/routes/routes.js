@@ -54,8 +54,6 @@ router.post("/register", async (req, res) => {
       if (newUser) {
         // Generate JWT token with user ID
 
-
-
         var transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
@@ -65,25 +63,27 @@ router.post("/register", async (req, res) => {
         });
 
         var mailOptions = {
-          from: `"CampusLink" <${process.env.GMAIL}>`,
+          from: "CampusLink",
           to: username,
           subject: "Welcome to CampusLink",
           html: `
           <h1 style="text-align: center; color: #333333;">Welcome to CampusLink!</h1>
           <p style="text-align: center;">Thank you for signing up with CampusLink. We're excited to have you on board!</p>
           <p style="text-align: center;">CampusLink is your go-to platform for shortening URLs, sharing resources, and collaborating with peers and professors.</p>
+          <p style="text-align: center;">If you have any questions or need assistance, feel free to reach out to our support team at support@campuslink.com.</p>
           <p style="text-align: center;">Happy linking!</p>
           <hr style="border: none; border-top: 1px solid #cccccc; margin: 20px 0;">
           <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
         `,
         };
 
-        async function mailSender(){
-          const info = await transporter.sendMail(mailOptions);
-          console.log("Message sent: %s", info.messageId);
-        }
-
-        mailSender().catch(console.error);
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (!error) {
+            console.log("Email sent: " + info.response);
+          } else{
+            console.log(error);
+          }
+        });
 
         const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
           expiresIn: "1d",
