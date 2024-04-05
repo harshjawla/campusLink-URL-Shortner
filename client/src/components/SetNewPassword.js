@@ -19,7 +19,7 @@ export default function SetNewPassword() {
   function takeMeToLoginPage() {
     setTimeout(() => {
       window.location.href = Frontend_URL + "/login";
-    }, 1000);
+    }, 3000);
   }
 
   async function handleClick() {
