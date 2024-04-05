@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
-import { Backend_URL } from "./config";
+import { Backend_URL, Frontend_URL } from "./config";
+import { Link } from "react-router-dom";
+import companyLogo from "../logos/companylogo.svg";
 
 export default function ForgetPassword(){
     const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ export default function ForgetPassword(){
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify(username),
+                body: JSON.stringify({username: email}),
             });
 
             if(response.ok){

@@ -3,6 +3,8 @@ import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
 import { Backend_URL, Frontend_URL } from "./config";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import companyLogo from "../logos/companylogo.svg";
 
 export default function SetNewPassword() {
   const [password, setPassword] = useState("");
