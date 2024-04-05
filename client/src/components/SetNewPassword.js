@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
 import { Backend_URL, Frontend_URL } from "./config";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import companyLogo from "../logos/companylogo.svg";
 
@@ -14,6 +14,7 @@ export default function SetNewPassword() {
   const [status, setStatus] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { userID } = useParams();
+  const navigate = useNavigate();
 
   function takeMeToLoginPage() {
     setTimeout(() => {
@@ -97,7 +98,8 @@ export default function SetNewPassword() {
     if(linkValid===1){
         setLoader(false);
     } else if(linkValid===2){
-        window.location.href = Frontend_URL + "/error";
+        // window.location.href = Frontend_URL + "/error";
+        navigate("/error");
     }
   }, [linkValid])
 
