@@ -79,7 +79,7 @@ export default function SetNewPassword() {
             headers: {
                 "Content-Type" : "application/json",
             },
-            body: JSON.stringify(userID)
+            body: JSON.stringify({userID: userID})
         });
         if(response.ok){
             setLinkValid(1);
