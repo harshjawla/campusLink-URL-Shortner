@@ -342,7 +342,7 @@ router.post("/forgetpassword", async (req, res) => {
 
 router.post("/update/user", async (req, res) => {
   const { userID, password } = req.body;
-  const user = await Password.findOne({ username: username, userID: userID });
+  const user = await Password.findOne({ userID: userID });
   if (user) {
     bcrypt.hash(password, saltRounds, async function (err, hash) {
       if (err) {
