@@ -54,6 +54,8 @@ router.post("/register", async (req, res) => {
       if (newUser) {
         // Generate JWT token with user ID
 
+        console.log("Gmail: ", process.env.GMAIL, " Pass: ", process.env.GPASSWORD);
+
         var transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
