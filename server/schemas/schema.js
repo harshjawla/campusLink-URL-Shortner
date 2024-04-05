@@ -27,4 +27,12 @@ const fileSchema = new mongoose.Schema({
 
 const Files = new mongoose.model("Files", fileSchema);
 
-module.exports = { User, Files };
+const passwordSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    userID: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now, expires: 300 }, // 5 minutes expiry
+  });
+
+const Password = new mongoose.model("Password", passwordSchema);
+
+module.exports = { User, Files, Password };

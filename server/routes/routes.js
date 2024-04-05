@@ -2,11 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const { User, Files } = require("../schemas/schema");
+const { User, Files, Password } = require("../schemas/schema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const shortId = require("shortid");
 const { Backend_URL, Frontend_URL, Backend_DOMAIN } = require("../config");
+const nodemailer = require("nodemailer");
 
 const saltRounds = 10;
 
@@ -52,6 +53,36 @@ router.post("/register", async (req, res) => {
 
       if (newUser) {
         // Generate JWT token with user ID
+
+        var transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "natflix88@gmail.com",
+            pass: process.env.GPASSWORD,
+          },
+        });
+
+        var mailOptions = {
+          from: "CampusLink",
+          to: username,
+          subject: "Welcome to CampusLink",
+          html: `
+          <h1 style="text-align: center; color: #333333;">Welcome to CampusLink!</h1>
+          <p style="text-align: center;">Thank you for signing up with CampusLink. We're excited to have you on board!</p>
+          <p style="text-align: center;">CampusLink is your go-to platform for shortening URLs, sharing resources, and collaborating with peers and professors.</p>
+          <p style="text-align: center;">If you have any questions or need assistance, feel free to reach out to our support team at support@campuslink.com.</p>
+          <p style="text-align: center;">Happy linking!</p>
+          <hr style="border: none; border-top: 1px solid #cccccc; margin: 20px 0;">
+          <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
+        `,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (!error) {
+            console.log("Email sent: " + info.response);
+          }
+        });
+
         const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
           expiresIn: "1d",
         });
@@ -202,47 +233,123 @@ router.get("/:linkID", async (req, res) => {
   res.redirect(url);
 });
 
-router.post("/searchfile",async (req,res)=>{
+router.post("/searchfile", async (req, res) => {
   try {
-    const {linkID, username} = req.body;
-    const file = await Files.findOne({linkID: linkID, username: username});
+    const { linkID, username } = req.body;
+    const file = await Files.findOne({ linkID: linkID, username: username });
 
-    if(file){
+    if (file) {
       res.status(200).json(file);
-    } else{
-      res.status(400).json({message: "Data not found"});
+    } else {
+      res.status(400).json({ message: "Data not found" });
     }
   } catch (error) {
-    res.status(500).json({message: "Internal Server Error"});
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-router.post("/editfile", async (req,res)=>{
+router.post("/editfile", async (req, res) => {
   try {
-    const {linkID, title, original_link, username} = req.body;
-    const file = await Files.findOne({linkID: linkID});
+    const { linkID, title, original_link, username } = req.body;
+    const file = await Files.findOne({ linkID: linkID });
 
-    if(!file){
-      return res.status(400).json({message: "Data not found!"});
+    if (!file) {
+      return res.status(400).json({ message: "Data not found!" });
     }
 
     file.title = "";
 
     await file.save();
 
-    const anotherFile = await Files.findOne({username: username, title: title});
+    const anotherFile = await Files.findOne({
+      username: username,
+      title: title,
+    });
 
-    if(anotherFile){
-      return res.status(401).json({message: "Title must be unique"});
+    if (anotherFile) {
+      return res.status(401).json({ message: "Title must be unique" });
     }
 
     file.title = title;
     file.original_link = original_link;
     await file.save();
 
-    return res.status(200).json({message: "success"});
+    return res.status(200).json({ message: "success" });
   } catch (error) {
-    return res.status(500).json({message: "Internal Server Error"});
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/forgetpassword", async (req, res) => {
+  const { username } = req.body;
+  const userID = shortId.generate();
+  const entry = await Password.create({
+    username: username,
+    userID: userID,
+  });
+  if (entry) {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "natflix88@gmail.com",
+        pass: process.env.GPASSWORD,
+      },
+    });
+
+    const resetPasswordLink = Frontend_URL + "/reset/" + userID;
+
+    var mailOptions = {
+      from: "CampusLink",
+      to: username,
+      subject: "Reset Your Password",
+      html: `
+      <p>Hello,</p>
+      <p>We received a request to reset your password. Click the link below to reset your password:</p>
+      <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
+      <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
+      <p>If you didn't request this, you can safely ignore this email.</p>
+      <p>Best regards,<br/>CampusLink Team</p>
+    `,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error!" });
+      } else {
+        console.log("Email sent: " + info.response);
+        res.status(200).json({ message: "Success!" });
+      }
+    });
+  } else {
+    return res.status(500).json({ message: "Internal Server Error!" });
+  }
+});
+
+router.post("/forget/user", async (req, res) => {
+  const { username, userID, password } = req.body;
+  const user = await Password.findOne({ username: username, userID: userID });
+  if (user) {
+    bcrypt.hash(password, saltRounds, async function (err, hash) {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      const userExists = await User.findOne({ username: username });
+
+      if (userExists) {
+        userExists.password = hash;
+
+        await userExists.save();
+
+        res.status(200).json({ message: "Updated password successfully!" });
+      } else {
+        res.status(404).json({ message: "User does not exists" });
+      }
+    });
+  } else {
+    return res.status(400).json({ message: "Link expired!" });
   }
 });
 
