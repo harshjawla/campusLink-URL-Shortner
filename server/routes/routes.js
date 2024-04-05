@@ -74,7 +74,6 @@ router.post("/register", async (req, res) => {
             <h1 style="text-align: center; color: #333333;">Welcome to CampusLink!</h1>
             <p style="text-align: center;">Thank you for signing up with CampusLink. We're excited to have you on board!</p>
             <p style="text-align: center;">CampusLink is your go-to platform for shortening URLs, sharing resources, and collaborating with peers and professors.</p>
-            <p style="text-align: center;">If you have any questions or need assistance, feel free to reach out to our support team at support@campuslink.com.</p>
             <p style="text-align: center;">Happy linking!</p>
             <hr style="border: none; border-top: 1px solid #cccccc; margin: 20px 0;">
             <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
