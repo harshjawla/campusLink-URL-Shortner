@@ -331,13 +331,10 @@ router.post("/forgetpassword", async (req, res) => {
 
       console.log("Message sent: %s", info.messageId);
     }
-    try {
-      await mailSender();
-      res.status(200).send("Mail sent successfully");
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error sending mail");
-    }
+    await mailSender().catch(() => {
+      return res.status(500).json({ message: "Internal Server Error" });
+    });
+    return res.status(200).json({ message: "Success" });
   } else {
     return res.status(500).json({ message: "Internal Server Error!" });
   }
