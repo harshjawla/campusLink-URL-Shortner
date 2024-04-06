@@ -300,7 +300,7 @@ router.post("/forgetpassword", async (req, res) => {
     userID: userID,
   });
   if (entry) {
-    async function mailSender() {
+    try {
       const resetPasswordLink = Frontend_URL + "/reset/" + userID;
 
       var mailOptions = {
@@ -319,12 +319,10 @@ router.post("/forgetpassword", async (req, res) => {
 
       const info = await transporter.sendMail(mailOptions);
 
-      console.log("Message sent: %s", info.messageId);
+      res.status(200).json({message: "Success"});
+    } catch (error) {
+      res.status(500).json({message: "Failed to send mail"});
     }
-    await mailSender().catch(() => {
-      return res.status(500).json({ message: "Internal Server Error" });
-    });
-    return res.status(200).json({ message: "Success" });
   } else {
     return res.status(500).json({ message: "Internal Server Error!" });
   }
