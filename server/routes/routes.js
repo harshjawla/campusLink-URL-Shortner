@@ -15,6 +15,17 @@ router.get("/", (req, res) => {
   res.send("Working");
 });
 
+var transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.GMAIL,
+    pass: process.env.GPASSWORD,
+  },
+});
+
 router.post("/user", (req, res) => {
   const token = req.cookies.jwt;
   if (token) {
@@ -55,16 +66,6 @@ router.post("/register", async (req, res) => {
         // Generate JWT token with user ID
 
         async function mailSender() {
-          var transporter = nodemailer.createTransport({
-            service: "Gmail",
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-              user: process.env.GMAIL,
-              pass: process.env.GPASSWORD,
-            },
-          });
 
           var mailOptions = {
             from: `"CampusLink" <${process.env.GMAIL}>`,
@@ -300,17 +301,6 @@ router.post("/forgetpassword", async (req, res) => {
   });
   if (entry) {
     async function mailSender() {
-      var transporter = nodemailer.createTransport({
-        service: "Gmail",
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.GMAIL,
-          pass: process.env.GPASSWORD,
-        },
-      });
-
       const resetPasswordLink = Frontend_URL + "/reset/" + userID;
 
       var mailOptions = {
