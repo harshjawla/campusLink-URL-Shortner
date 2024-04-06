@@ -54,7 +54,7 @@ router.post("/register", async (req, res) => {
       if (newUser) {
         // Generate JWT token with user ID
 
-        async function mailSender(){
+        async function mailSender() {
           var transporter = nodemailer.createTransport({
             service: "Gmail",
             host: "smtp.gmail.com",
@@ -65,7 +65,7 @@ router.post("/register", async (req, res) => {
               pass: process.env.GPASSWORD,
             },
           });
-  
+
           var mailOptions = {
             from: `"CampusLink" <${process.env.GMAIL}>`,
             to: username,
@@ -79,7 +79,7 @@ router.post("/register", async (req, res) => {
             <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
           `,
           };
-  
+
           const info = await transporter.sendMail(mailOptions);
 
           console.log("Message sent: %s", info.messageId);
@@ -287,10 +287,10 @@ router.post("/editfile", async (req, res) => {
 router.post("/forgetpassword", async (req, res) => {
   const { username } = req.body;
 
-  const user = await User.findOne({username: username});
+  const user = await User.findOne({ username: username });
 
-  if(!user){
-    return res.status(404).json({message: "User not found"});
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
   }
 
   const userID = shortId.generate();
@@ -299,42 +299,45 @@ router.post("/forgetpassword", async (req, res) => {
     userID: userID,
   });
   if (entry) {
-    var transporter = nodemailer.createTransport({
-      service: "Gmail",
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.GMAIL,
-        pass: process.env.GPASSWORD,
-      },
-    });
+    async function mailSender() {
+      var transporter = nodemailer.createTransport({
+        service: "Gmail",
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.GMAIL,
+          pass: process.env.GPASSWORD,
+        },
+      });
 
-    const resetPasswordLink = Frontend_URL + "/reset/" + userID;
+      const resetPasswordLink = Frontend_URL + "/reset/" + userID;
 
-    var mailOptions = {
-      from: `"CampusLink" <${process.env.GMAIL}>`,
-      to: username,
-      subject: "Reset Your Password",
-      html: `
-      <p>Hello,</p>
-      <p>We received a request to reset your password. Click the link below to reset your password:</p>
-      <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
-      <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
-      <p>If you didn't request this, you can safely ignore this email.</p>
-      <p>Best regards,<br/>CampusLink Team</p>
-    `,
-    };
+      var mailOptions = {
+        from: `"CampusLink" <${process.env.GMAIL}>`,
+        to: username,
+        subject: "Reset Your Password",
+        html: `
+        <p>Hello,</p>
+        <p>We received a request to reset your password. Click the link below to reset your password:</p>
+        <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
+        <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
+        <p>If you didn't request this, you can safely ignore this email.</p>
+        <p>Best regards,<br/>CampusLink Team</p>
+      `,
+      };
 
-    await transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal Server Error!" });
-      } else {
-        console.log("Email sent: " + info.response);
-        res.status(200).json({ message: "Success!" });
-      }
-    });
+      const info = await transporter.sendMail(mailOptions);
+
+      console.log("Message sent: %s", info.messageId);
+    }
+    try {
+      await mailSender();
+      res.status(200).send("Mail sent successfully");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error sending mail");
+    }
   } else {
     return res.status(500).json({ message: "Internal Server Error!" });
   }
@@ -353,7 +356,7 @@ router.post("/update/user", async (req, res) => {
       const userExists = await User.findOne({ username: username });
 
       if (userExists) {
-        const response = await Password.deleteMany({username: username});
+        const response = await Password.deleteMany({ username: username });
         userExists.password = hash;
 
         await userExists.save();
@@ -368,17 +371,17 @@ router.post("/update/user", async (req, res) => {
   }
 });
 
-router.post("/linkexpiry",async (req,res)=>{
+router.post("/linkexpiry", async (req, res) => {
   try {
-    const {userID} = req.body;
-    const user = await Password.findOne({userID : userID});
-    if(user){
-      res.status(200).json({message: "Link is Valid"});
-    } else{
-      res.status(404).json({message: "Link Expired"});
+    const { userID } = req.body;
+    const user = await Password.findOne({ userID: userID });
+    if (user) {
+      res.status(200).json({ message: "Link is Valid" });
+    } else {
+      res.status(404).json({ message: "Link Expired" });
     }
   } catch (error) {
-    res.status(500).json({message: "Internal Server Error"});
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
