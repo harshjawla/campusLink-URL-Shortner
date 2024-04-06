@@ -85,7 +85,7 @@ router.post("/register", async (req, res) => {
           console.log("Message sent: %s", info.messageId);
         }
 
-        mailSender().catch(console.error);
+        await mailSender().catch(console.error);
 
         const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
           expiresIn: "1d",
