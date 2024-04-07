@@ -35,9 +35,9 @@ async function passwordResetMail(userID, username){
     subject: "Reset Your Password",
     html: `
     <p>Hello,</p>
-    <p>We received a request to reset your password. Click the link below to reset your password:</p>
-    
-    <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
+    <p>We received a request to reset your password. Please use the following OTP (One-Time Password) to reset your password:</p>
+    <p><strong>OTP:</strong> ${userID}</p>
+    <p><strong>Please note that this OTP is valid for only 5 minutes.</strong></p>
     <p>If you didn't request this, you can safely ignore this email.</p>
     <p>Best regards,<br/>CampusLink Team</p>
   `,

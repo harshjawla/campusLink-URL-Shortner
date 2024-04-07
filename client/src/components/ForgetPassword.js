@@ -11,6 +11,44 @@ export default function ForgetPassword() {
   const [warning, setWarning] = useState("");
   const [status, setStatus] = useState("");
   const [success, setSuccess] = useState(false);
+  const [otp, setOtp] = useState("");
+
+  async function handleVerifyOtp(){
+    if(!otp){
+      setStatus("error");
+      setWarning("Enter OTP!");
+      return;
+    }
+
+    try {
+      setLoader(true);
+      const response = await fetch(Backend_URL + "/verify",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userID : userID}),
+      });
+
+      if(response.ok){
+        window.location.href = Frontend_URL + "/reset/" + userID;
+      } else if(response.status===400){
+        setLoader(false);
+        setOtp("");
+        setSuccess(false);
+        setStatus("error");
+        setWarning("OTP expired please generate a new one!");
+      } else{
+        setStatus("error");
+        setLoader(false);
+        setWarning("Internal Server Error, please try after sometime");
+      }
+    } catch (error) {
+      setStatus("error");
+      setLoader(false);
+      setWarning("Internal Server Error, please try after sometime");
+    }
+  }
 
   async function handleClick() {
     if (!email) {
@@ -131,29 +169,56 @@ export default function ForgetPassword() {
                     value={email}
                   />
                   {success && (
-                    <p className="text-red-500">
-                      Link to reset password has been sent on your email
-                      address.
-                    </p>
+                    <input
+                      className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-whitw"
+                      type="email"
+                      placeholder="Enter Your Email"
+                      onChange={(e) => setOtp(e.target.value)}
+                      value={otp}
+                    />
                   )}
-                  <button
-                    onClick={handleClick}
-                    className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                  >
-                    <svg
-                      className="w-6 h-6 -ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                  {!success && (
+                    <button
+                      onClick={handleClick}
+                      className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                     >
-                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="8.5" cy="7" r="4" />
-                      <path d="M20 8v6M23 11h-6" />
-                    </svg>
-                    <span className="ml-3">Check User</span>
-                  </button>
+                      <svg
+                        className="w-6 h-6 -ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <path d="M20 8v6M23 11h-6" />
+                      </svg>
+                      <span className="ml-3">Send OTP</span>
+                    </button>
+                  )}
+                  {success && <p className="text-red-500">Enter you OTP below</p>}
+                  {success && (
+                    <button
+                      onClick={handleVerifyOtp}
+                      className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                    >
+                      <svg
+                        className="w-6 h-6 -ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <path d="M20 8v6M23 11h-6" />
+                      </svg>
+                      <span className="ml-3">Verify OTP</span>
+                    </button>
+                  )}
+
                   <p className="mt-6 text-xs text-gray-600 text-center">
                     Already have an account{" "}
                     <Link
