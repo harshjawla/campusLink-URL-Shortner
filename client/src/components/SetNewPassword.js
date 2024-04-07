@@ -44,7 +44,7 @@ export default function SetNewPassword() {
       const response = await fetch(Backend_URL + "/update/user", {
         method: "POST",
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -98,8 +98,8 @@ export default function SetNewPassword() {
     if(linkValid===1){
         setLoader(false);
     } else if(linkValid===2){
-        // window.location.href = Frontend_URL + "/error";
-        navigate("/error");
+        window.location.href = Frontend_URL + "/error";
+        // navigate("/error");
     }
   }, [linkValid])
 
