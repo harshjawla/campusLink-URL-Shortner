@@ -290,9 +290,9 @@ router.post("/forgetpassword", async (req, res) => {
 
   const user = await User.findOne({ username: username });
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
+  // if (!user) {
+  //   return res.status(404).json({ message: "User not found" });
+  // }
 
   const userID = await shortId.generate();
   const entry = await Password.create({
