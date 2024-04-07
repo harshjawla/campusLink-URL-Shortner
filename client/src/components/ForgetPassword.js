@@ -27,11 +27,11 @@ export default function ForgetPassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({userID : userID}),
+        body: JSON.stringify({userID : otp}),
       });
 
       if(response.ok){
-        window.location.href = Frontend_URL + "/reset/" + userID;
+        window.location.href = Frontend_URL + "/reset/" + otp;
       } else if(response.status===400){
         setLoader(false);
         setOtp("");
