@@ -168,7 +168,7 @@ export default function ForgetPassword() {
                     value={email}
                     disabled={success ? true : false}
                   />
-                  {success && <p className="text-red-500 my-5">Enter you OTP below</p>}
+                  {success && <p className="text-red-500 my-5">Enter your OTP below</p>}
                   {success && (
                     <input
                       className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-whitw"

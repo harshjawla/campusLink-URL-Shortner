@@ -52,7 +52,7 @@ export default function SetNewPassword() {
       if (response.ok) {
         setLoader(false);
         setStatus("success");
-        setWarning("PassWord Changed, you Will be taken to login page shortly");
+        setWarning("Password Changed, you will be taken to login page shortly");
         takeMeToLoginPage();
       } else if (response.status === 400) {
         setLoader(false);
@@ -75,16 +75,16 @@ export default function SetNewPassword() {
     async function fetchUser() {
       try {
         const response = await fetch(Backend_URL + "/linkexpiry", {
-            method: "POST",
-            headers: {
-                "Content-Type" : "application/json",
-            },
-            body: JSON.stringify({userID: userID})
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userID: userID }),
         });
-        if(response.ok){
-            setLinkValid(1);
+        if (response.ok) {
+          setLinkValid(1);
         } else {
-            setLinkValid(2);
+          setLinkValid(2);
         }
       } catch (error) {
         setLinkValid(2);
@@ -94,14 +94,14 @@ export default function SetNewPassword() {
     fetchUser();
   }, []);
 
-  useEffect(()=>{
-    if(linkValid===1){
-        setLoader(false);
-    } else if(linkValid===2){
-        window.location.href = Frontend_URL + "/error";
-        // navigate("/error");
+  useEffect(() => {
+    if (linkValid === 1) {
+      setLoader(false);
+    } else if (linkValid === 2) {
+      window.location.href = Frontend_URL + "/error";
+      // navigate("/error");
     }
-  }, [linkValid])
+  }, [linkValid]);
 
   useEffect(() => {
     if (warning && status) {
@@ -204,7 +204,7 @@ export default function SetNewPassword() {
                       <circle cx="8.5" cy="7" r="4" />
                       <path d="M20 8v6M23 11h-6" />
                     </svg>
-                    <span className="ml-3">change PassWord</span>
+                    <span className="ml-3">change Password</span>
                   </button>
                   <p className="mt-6 text-xs text-gray-600 text-center">
                     Already have an account{" "}
