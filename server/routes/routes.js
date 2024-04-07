@@ -288,6 +288,8 @@ router.post("/editfile", async (req, res) => {
 router.post("/forgetpassword", async (req, res) => {
   const { username } = req.body;
 
+  console.log("Uername is: ", username);
+
   const user = await User.findOne({ username: username });
 
   if (!user) {
