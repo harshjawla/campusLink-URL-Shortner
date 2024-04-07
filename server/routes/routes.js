@@ -288,15 +288,13 @@ router.post("/editfile", async (req, res) => {
 router.post("/forgetpassword", async (req, res) => {
   const { username } = req.body;
 
-  console.log("Uername is: ", username);
-
   const user = await User.findOne({ username: username });
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  const userID = shortId.generate();
+  const userID = await shortId.generate();
   const entry = await Password.create({
     username: username,
     userID: userID,
