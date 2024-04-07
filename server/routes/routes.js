@@ -27,7 +27,6 @@ var transporter = nodemailer.createTransport({
 });
 
 async function passwordResetMail(userID, username){
-  const resetPasswordLink = Frontend_URL + "/reset/" + userID;
 
   var mailOptions = {
     from: `"CampusLink" <${process.env.GMAIL}>`,
@@ -334,6 +333,20 @@ router.post("/forgetpassword", async (req, res) => {
     }
   } else {
     return res.status(500).json({ message: "Internal Server Error!" });
+  }
+});
+
+router.post("/verify", async (req,res)=>{
+  try {
+    const {userID} = req.body;
+    const response = await Password.findOne({userID: userID});
+    if(response){
+      res.status(200).json({message: "OTP is valid"});
+    } else{
+      res.status(400).json({message: "OTP expired"});
+    }
+  } catch (error) {
+    res.status(500).json({message: "Internal Server Error"});
   }
 });
 

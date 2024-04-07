@@ -22,12 +22,12 @@ export default function ForgetPassword() {
 
     try {
       setLoader(true);
-      const response = await fetch(Backend_URL + "/verify",{
+      const response = await fetch(Backend_URL + "/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({userID : otp}),
+        body: JSON.stringify({ userID: otp }),
       });
 
       if(response.ok){
@@ -168,11 +168,11 @@ export default function ForgetPassword() {
                     value={email}
                     disabled={success ? true : false}
                   />
-                  {success && <p className="text-red-500 my-8">Enter you OTP below</p>}
+                  {success && <p className="text-red-500 my-5">Enter you OTP below</p>}
                   {success && (
                     <input
                       className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-whitw"
-                      type="email"
+                      type="password"
                       placeholder="Enter OTP"
                       onChange={(e) => setOtp(e.target.value)}
                       value={otp}
