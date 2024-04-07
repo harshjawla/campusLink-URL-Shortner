@@ -36,7 +36,7 @@ async function passwordResetMail(userID, username){
     html: `
     <p>Hello,</p>
     <p>We received a request to reset your password. Click the link below to reset your password:</p>
-    <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
+    
     <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
     <p>If you didn't request this, you can safely ignore this email.</p>
     <p>Best regards,<br/>CampusLink Team</p>
