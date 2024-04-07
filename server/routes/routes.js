@@ -26,6 +26,50 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+async function passwordResetMail(userID, username){
+  const resetPasswordLink = Frontend_URL + "/reset/" + userID;
+
+  var mailOptions = {
+    from: `"CampusLink" <${process.env.GMAIL}>`,
+    to: username,
+    subject: "Reset Your Password",
+    html: `
+    <p>Hello,</p>
+    <p>We received a request to reset your password. Click the link below to reset your password:</p>
+    <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
+    <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
+    <p>If you didn't request this, you can safely ignore this email.</p>
+    <p>Best regards,<br/>CampusLink Team</p>
+  `,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  console.log("Password Reset mail sent: %s", info.messageId);
+}
+
+async function welcomeMail(username) {
+
+  var mailOptions = {
+    from: `"CampusLink" <${process.env.GMAIL}>`,
+    to: username,
+    subject: "Welcome to CampusLink",
+    html: `
+    <h1 style="text-align: center; color: #333333;">Welcome to CampusLink!</h1>
+    <p style="text-align: center;">Thank you for signing up with CampusLink. We're excited to have you on board!</p>
+    <p style="text-align: center;">CampusLink is your go-to platform for shortening URLs, sharing resources, and collaborating with peers and professors.</p>
+    <p style="text-align: center;">Happy linking!</p>
+    <hr style="border: none; border-top: 1px solid #cccccc; margin: 20px 0;">
+    <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
+  `,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+
+  console.log("Welcome Mail Sent: %s", info.messageId);
+}
+
+
+
 router.post("/user", (req, res) => {
   const token = req.cookies.jwt;
   if (token) {
@@ -65,28 +109,9 @@ router.post("/register", async (req, res) => {
       if (newUser) {
         // Generate JWT token with user ID
 
-        async function mailSender() {
+        
 
-          var mailOptions = {
-            from: `"CampusLink" <${process.env.GMAIL}>`,
-            to: username,
-            subject: "Welcome to CampusLink",
-            html: `
-            <h1 style="text-align: center; color: #333333;">Welcome to CampusLink!</h1>
-            <p style="text-align: center;">Thank you for signing up with CampusLink. We're excited to have you on board!</p>
-            <p style="text-align: center;">CampusLink is your go-to platform for shortening URLs, sharing resources, and collaborating with peers and professors.</p>
-            <p style="text-align: center;">Happy linking!</p>
-            <hr style="border: none; border-top: 1px solid #cccccc; margin: 20px 0;">
-            <p style="text-align: center; font-size: 0.8em; color: #999999;">This is an automated message. Please do not reply.</p>
-          `,
-          };
-
-          const info = await transporter.sendMail(mailOptions);
-
-          console.log("Message sent: %s", info.messageId);
-        }
-
-        await mailSender().catch(console.error);
+        await welcomeMail(username).catch(console.error);
 
         const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
           expiresIn: "1d",
@@ -290,9 +315,9 @@ router.post("/forgetpassword", async (req, res) => {
 
   const user = await User.findOne({ username: username });
 
-  // if (!user) {
-  //   return res.status(404).json({ message: "User not found" });
-  // }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
   const userID = await shortId.generate();
   const entry = await Password.create({
@@ -301,23 +326,7 @@ router.post("/forgetpassword", async (req, res) => {
   });
   if (entry) {
     try {
-      const resetPasswordLink = Frontend_URL + "/reset/" + userID;
-
-      var mailOptions = {
-        from: `"CampusLink" <${process.env.GMAIL}>`,
-        to: username,
-        subject: "Reset Your Password",
-        html: `
-        <p>Hello,</p>
-        <p>We received a request to reset your password. Click the link below to reset your password:</p>
-        <p><a target="_blank" href="${resetPasswordLink}">Reset Password</a></p>
-        <p><strong>Please note that this link is valid for only 5 minutes.</strong></p>
-        <p>If you didn't request this, you can safely ignore this email.</p>
-        <p>Best regards,<br/>CampusLink Team</p>
-      `,
-      };
-
-      const info = await transporter.sendMail(mailOptions);
+      await passwordResetMail(userID, username);
 
       res.status(200).json({message: "Success"});
     } catch (error) {
