@@ -69,7 +69,6 @@ export default function ForgetPassword() {
       });
 
       if (response.ok) {
-        setEmail("");
         setLoader(false);
         setSuccess(true);
         setStatus("success");
@@ -167,12 +166,14 @@ export default function ForgetPassword() {
                     placeholder="Enter Your Email"
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
+                    disabled={success ? true : false}
                   />
+                  {success && <p className="text-red-500 my-8">Enter you OTP below</p>}
                   {success && (
                     <input
                       className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-whitw"
                       type="email"
-                      placeholder="Enter Your Email"
+                      placeholder="Enter OTP"
                       onChange={(e) => setOtp(e.target.value)}
                       value={otp}
                     />
@@ -197,7 +198,6 @@ export default function ForgetPassword() {
                       <span className="ml-3">Send OTP</span>
                     </button>
                   )}
-                  {success && <p className="text-red-500">Enter you OTP below</p>}
                   {success && (
                     <button
                       onClick={handleVerifyOtp}
