@@ -1,4 +1,4 @@
-const Backend_URL = 'https://campus-link-url-shortner.vercel.app';
+const Backend_URL = 'https://camlink.vercel.app';
 const Frontend_URL = 'https://campuslink-client.vercel.app';
 
 export {
