@@ -68,7 +68,7 @@ const Navbar = () => {
         <div className="md:hidden">
           <button
             type="button"
-            className="bg-gray-200 hover:bg-gray-300 text-white font-semibold py-2 px-4 rounded-full transition duration-300 transform hover:scale-105"
+            className="bg-gray-200 mx-3 hover:bg-gray-300 text-white font-semibold py-2 px-4 rounded-full transition duration-300 transform hover:scale-105"
             onClick={handlePlus}
           >
             <img src={plus} alt="plus" className="h-5 w-5" />
