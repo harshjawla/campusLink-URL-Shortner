@@ -67,6 +67,13 @@ const Navbar = () => {
         </div>
         <div className="md:hidden">
           <button
+            type="button"
+            className="bg-gray-200 hover:bg-gray-300 text-white font-semibold py-2 px-4 rounded-full transition duration-300 transform hover:scale-105"
+            onClick={handlePlus}
+          >
+            <img src={plus} alt="plus" className="h-5 w-5" />
+          </button>
+          <button
             onClick={toggleMenu}
             className="text-gray-800 hover:bg-gray-200 rounded-full p-2"
           >
@@ -87,13 +94,6 @@ const Navbar = () => {
         </div>
         {isOpen && (
           <div className="md:hidden absolute top-0 left-0 w-full bg-white shadow-md z-20">
-            <button
-              type="button"
-              className="bg-gray-200 hover:bg-gray-300 text-white font-semibold py-2 px-4 rounded-full transition duration-300 transform hover:scale-105"
-              onClick={handlePlus}
-            >
-              <img src={plus} alt="plus" className="h-5 w-5" />
-            </button>
             <div className="p-4 flex flex-col items-center">
               <button
                 type="button"
