@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
 import { Backend_URL, Frontend_URL } from "./config";
-import { useEffect, useState, useNavigate } from "react";
+import { useEffect, useState } from "react";
 import companyLogo from "../logos/companylogo.svg";
 
 export default function LoginPage() {
