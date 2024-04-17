@@ -119,9 +119,9 @@ router.post("/register", async (req, res) => {
         // Set the JWT token as an HTTP-only cookie
         res.cookie("jwt", token, {
           httpOnly: true,
-          sameSite: "Strict",
+          sameSite: "None",
           secure: true,
-          domain: ".vercel.app",
+          domain: Backend_DOMAIN,
           expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
         });
         res.status(200).json({ message: "Registration successful" });
@@ -159,7 +159,7 @@ router.post("/login", async (req, res) => {
         // Set the JWT token as an HTTP-only cookie
         res.cookie("jwt", token, {
           httpOnly: true,
-          sameSite: "Strict",
+          sameSite: "None",
           secure: true,
           domain: Backend_DOMAIN,
           expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
@@ -180,9 +180,9 @@ router.post("/logout", async (req, res) => {
   try {
     res.cookie("jwt", " ", {
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "None",
       secure: true,
-      domain: ".vercel.app",
+      domain: Backend_DOMAIN,
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
     });
     return res.status(200).send("Logged Out Successfully");
