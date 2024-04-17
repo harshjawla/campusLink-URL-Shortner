@@ -161,6 +161,7 @@ router.post("/login", async (req, res) => {
           sameSite: "None",
           secure: true,
           domain: Backend_DOMAIN,
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
         });
         res.status(200).json({ message: "Login successful" });
       } else {
