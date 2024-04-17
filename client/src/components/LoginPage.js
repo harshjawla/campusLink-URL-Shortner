@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Loading from "./Loading";
 import { Bounce, toast } from "react-toastify";
 import { Backend_URL, Frontend_URL } from "./config";
@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [warning, setWarning] = useState("");
   const [status, setStatus] = useState("");
   const [login, setLogin] = useState(false);
-  const navigate = useNavigate();
 
   async function handleClick() {
     if (!email || !password) {
@@ -110,8 +109,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (login) {
-      // window.location.href = Frontend_URL + "/dashboard";
-      navigate("/dashboard");
+      window.location.href = Frontend_URL + "/dashboard";
     }
   }, [login]);
 
